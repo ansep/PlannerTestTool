@@ -7,13 +7,14 @@ package it.uniroma1.plannertests.writer;
 
 import it.uniroma1.plannertests.model.Attrazione;
 import it.uniroma1.plannertests.model.Museo;
-import it.uniroma1.plannertests.model.Stanza;
+import it.uniroma1.plannertests.model.stanze.Stanza;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.Map;
 public class NewPddlWriter extends AbstractWriter{
     
    private Map<Integer,List<Integer>> adiacenze;
+   private Map<Integer, Integer> shortcut;
    
     public NewPddlWriter(Museo museo, int visite, String pddlDirectory) throws IOException {
         super(museo, visite, pddlDirectory);
@@ -43,58 +45,42 @@ public class NewPddlWriter extends AbstractWriter{
         return f.getPath();
     }
     
-    private void recursiveLink2(Stanza currentNode, Stanza leafNode, Stanza startNode,
-            Map<Stanza, List<Stanza>> adiacenze, Map<Stanza, List<Stanza>> reverse,
-            ArrayDeque<Stanza> grey, ArrayDeque<Stanza> black) {
-        if(currentNode == startNode) {
-            adiacenze.get(leafNode).add(currentNode);
-            return;
-        }
-        
-        int outDegree = adiacenze.get(currentNode).size();
-        //se il nodo ha piu di un figlio, allora e' un bivio
-        if(outDegree > 1) {
-            adiacenze.get(leafNode).add(currentNode);
-            if(!grey.contains(currentNode) && !black.contains(currentNode))
-                grey.add(currentNode);
-            return;
-        }
-        //int parent = reverse.get(currentNode).get(0);
-        //recursiveLink(parent, leafNode, startNode, adiacenze, reverse, grey, black);
-    }
-    
-    private void recursiveLink(int currentNode, int leafNode, int startNode,
-            Map<Integer, List<Integer>> adiacenze, Map<Integer, List<Integer>> reverse,
+    private void recursiveLink(int currentNode, int leafNode, int startNode, Map<Integer, List<Integer>> reverse,
             ArrayDeque<Integer> grey, ArrayDeque<Integer> black) {
         if(currentNode == startNode) {
-            adiacenze.get(leafNode).add(currentNode);
+            shortcut.put(leafNode, currentNode);
             return;
         }
         
         int outDegree = adiacenze.get(currentNode).size();
         //se il nodo ha piu di un figlio, allora e' un bivio
         if(outDegree > 1) {
-            adiacenze.get(leafNode).add(currentNode);
+            shortcut.put(leafNode, currentNode);
             if(!grey.contains(currentNode) && !black.contains(currentNode))
                 grey.add(currentNode);
             return;
         }
         int parent = reverse.get(currentNode).get(0);
-        recursiveLink(parent, leafNode, startNode, adiacenze, reverse, grey, black);
+        recursiveLink(parent, leafNode, startNode, reverse, grey, black);
     }
     
     private void preprocess() {
         adiacenze = new HashMap<>();
+        shortcut = new HashMap<>();
         List<Integer> l;
-        for(Stanza s : museo.getStanze()) {
+        Stanza[] roomArray = Arrays.copyOfRange(museo.getStanze(), 0 , museo.getOpenRooms());
+        
+        for(Stanza s : roomArray) {
             int sala = s.getId();
             l = new ArrayList<>();
             for(Stanza sa : s.getStanzeAdiacenti()) {
-                l.add(sa.getId());
+                if(sa != null && sa.getId() <= museo.getOpenRooms())
+                    l.add(sa.getId());
             }
             adiacenze.put(sala, l);
         }
         Map<Integer,List<Integer>> listaPrev = new HashMap<>();
+        
         for(int key : adiacenze.keySet()) {
             for(int value : adiacenze.get(key)) {
                 l = listaPrev.get(value);
@@ -105,12 +91,12 @@ public class NewPddlWriter extends AbstractWriter{
             }
         }
         
-        printList(adiacenze);
-        printList(listaPrev);
+        //printList(adiacenze);
+        //printList(listaPrev);
         
         ArrayDeque<Integer> grey = new ArrayDeque<>();
         ArrayDeque<Integer> black = new ArrayDeque<>();
-        int startNode = museo.getStanze()[0].getId();
+        int startNode = roomArray[0].getId();
         //ricerca delle foglie
         for(int i : adiacenze.keySet()) {
             //se è nodo foglia, non ha adiacenze
@@ -124,10 +110,10 @@ public class NewPddlWriter extends AbstractWriter{
                 prev = x;
                 break;
             }
-            recursiveLink(prev, nodo, startNode, adiacenze, listaPrev, grey, black);
+            recursiveLink(prev, nodo, startNode, listaPrev, grey, black);
             black.add(nodo);
         }
-        printList(adiacenze);
+        //printList(adiacenze);
     }
     
     private static void printList(Map<Integer, List<Integer>> map) {
@@ -166,7 +152,8 @@ public class NewPddlWriter extends AbstractWriter{
             sb.setLength(0);
             
             //Action visit
-            for(Stanza s : museo.getStanze()) {
+            Stanza[] roomArray = Arrays.copyOfRange(museo.getStanze(), 0 , museo.getOpenRooms());
+            for(Stanza s : roomArray) {
                 for(int v = 0; v < visite; v++) {
                     String roomName = s.toString();
                     for(Attrazione a : s.getAttrazioni()) {
@@ -191,18 +178,29 @@ public class NewPddlWriter extends AbstractWriter{
             sb.setLength(0);
             //Action move
             for(int sala : adiacenze.keySet()) {
-                for (int adiacente : adiacenze.get(sala)) {
-                    String from = "stanza_" + sala;
-                    String to = "stanza_" + adiacente;
-                    sb.append("(:action move-").append(from).append('-').append(to).append("\n\t")
+                    for (int adiacente : adiacenze.get(sala)) {
+                        String from = "stanza_" + sala;
+                        String to = "stanza_" + adiacente;
+                        sb.append("(:action move-").append(from).append('-').append(to).append("\n\t")
                             .append(":precondition (and (cur_state ").append(from).append(") ")
                             .append("(not(room_visited ").append(to).append(")))\n\t")
                             .append(":effect (and (cur_state ").append(to).append(") ")
                             .append("(not (cur_state ").append(from).append(")) ")
                             .append("(room_visited ").append(from).append(") ")
                             .append("(increase (total-cost) ").append("1").append("))\n\t)\n\n\t");
-                }
+                    }
             }
+            
+            shortcut.forEach((sala, adiacente) -> {
+                String from = "stanza_" + sala;
+                String to = "stanza_" + adiacente;
+                sb.append("(:action move-").append(from).append('-').append(to).append("\n\t")
+                    .append(":precondition (cur_state ").append(from).append(") \n\t")
+                    .append(":effect (and (cur_state ").append(to).append(") ")
+                    .append("(not (cur_state ").append(from).append(")) ")
+                        .append("(room_visited ").append(from).append(") ")
+                    .append("(increase (total-cost) ").append("1").append("))\n\t)\n\n\t");
+            });
             sb.append("\n)");
             domainWriter.write(sb.toString());
             domainWriter.close();
@@ -215,10 +213,11 @@ public class NewPddlWriter extends AbstractWriter{
     @Override
     public String writeProblem() {
         StringBuilder sb = new StringBuilder();
+        Stanza[] roomArray = Arrays.copyOfRange(museo.getStanze(), 0 , museo.getOpenRooms());
         try {
             sb.append("(define (problem Visit) (:domain Museum)\n\t")
                     .append("(:objects\n\t\t");
-            for(Stanza s : museo.getStanze()) {
+            for(Stanza s : roomArray) {
                 String roomName = s.toString();
                 sb.append(roomName).append(" ");
             }
@@ -226,7 +225,7 @@ public class NewPddlWriter extends AbstractWriter{
             for(int i = 0; i <= visite; i++)
                 sb.append("v").append(i).append(" ");
             sb.append("- visit_state\n\t\t");
-            for(Stanza s : museo.getStanze())
+            for(Stanza s : roomArray)
                 for(Attrazione a : s.getAttrazioni())
                     sb.append(a.toString()).append(" ");
             sb.append("- attraction\n\t)\n\t");
@@ -236,8 +235,9 @@ public class NewPddlWriter extends AbstractWriter{
                     .append("(cur_state v0)\n\n\t\t")
                     .append("(= (total-cost) 0)\n\t)\n\n\t");
             
-            sb.append("(:goal\n\t\t(and\n\t\t(cur_state ").append(museo.getStanze()[museo.getStanze().length-1].toString())
-                    .append(")\n\t\t(cur_state v").append(visite).append(")\n\t\t)");
+            sb.append("(:goal\n\t\t(and\n\t\t")
+                    //.append("(cur_state ").append(museo.getStanze()[0].toString()).append(")\n\t\t")
+                    .append("(cur_state v").append(visite).append(")\n\t\t)");
             sb.append("\n\t)(:metric minimize (total-cost))\n)");
             
             problemWriter.write(sb.toString());

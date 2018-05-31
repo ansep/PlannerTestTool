@@ -5,9 +5,11 @@
  */
 package it.uniroma1.plannertests.writer;
 
+import it.uniroma1.plannertests.model.Attrazione;
 import it.uniroma1.plannertests.model.Museo;
+import it.uniroma1.plannertests.model.stanze.Stanza;
 import java.io.BufferedWriter;
-import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -32,6 +34,7 @@ public abstract class AbstractWriter {
         folderPath = createFolder();
         domainPath = folderPath + "/domain.pddl";
         problemPath = folderPath + "/problem.pddl";
+        writeMuseumProperties();
     }
     
     protected abstract String createFolder();
@@ -58,6 +61,41 @@ public abstract class AbstractWriter {
      * @return problem file path
      */
     public abstract String writeProblem();
+    
+    private void writeMuseumProperties() {
+        BufferedWriter museumWriter;
+        try {
+            museumWriter = new BufferedWriter(new FileWriter(folderPath + "/museum.properties"));
+            StringBuilder sb = new StringBuilder();
+            sb.append("attrazioni\n");
+            Stanza[] stanze = museo.getStanze();
+            for(Stanza stanza : stanze) {
+                sb.append("stanza_").append(stanza.getId()).append(" : ");
+                for(Attrazione attr : stanza.getAttrazioni()) {
+                    sb.append("attr_").append(attr.getId()).append(",");
+                }
+                sb.append("\n");
+            }
+            sb.append("adiacenze\n");
+            for(Stanza stanza : stanze) {
+                sb.append("stanza_").append(stanza.getId()).append(" : ");
+                for(Stanza adj : stanza.getStanzeAdiacenti()) {
+                    if(adj != null) {
+                        //System.out.println(adj);
+                    sb.append("stanza_");
+                    sb.append(adj.getId());
+                    sb.append(",");
+                    }
+                }
+                sb.append("\n");
+            }
+            museumWriter.write(sb.toString());
+            museumWriter.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        
+    }
     
     
 }

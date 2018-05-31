@@ -7,7 +7,7 @@ package it.uniroma1.plannertests.writer;
 
 import it.uniroma1.plannertests.model.Attrazione;
 import it.uniroma1.plannertests.model.Museo;
-import it.uniroma1.plannertests.model.Stanza;
+import it.uniroma1.plannertests.model.stanze.Stanza;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -81,18 +81,20 @@ public class PddlGroundedWriter extends AbstractWriter {
             for(Stanza s : museo.getStanze()) {
                 String roomName = s.toString();
                 for (Stanza sa : s.getStanzeAdiacenti()) {
-                    String nextRoom = sa.toString();
-                    sb.append("(:action move-").append(roomName).append('-').append(nextRoom).append("\n\t")
-                            .append(":precondition (cur_state ").append(roomName).append(")\n\t")
-                            .append(":effect (and (cur_state ").append(nextRoom).append(") ")
-                            .append("(not (cur_state ").append(roomName).append(")) ")
-                            .append("(increase (total-cost) 1").append("))\n\t)\n\n\t");
-                    if(!nextRoom.equals("end")) {
-                        sb.append("(:action move-").append(nextRoom).append('-').append(roomName).append("\n\t")
-                                .append(":precondition (cur_state ").append(nextRoom).append(")\n\t")
-                                .append(":effect (and (cur_state ").append(roomName).append(") ")
-                                .append("(not (cur_state ").append(nextRoom).append(")) ")
+                    if(sa != null) {
+                        String nextRoom = sa.toString();
+                        sb.append("(:action move-").append(roomName).append('-').append(nextRoom).append("\n\t")
+                                .append(":precondition (cur_state ").append(roomName).append(")\n\t")
+                                .append(":effect (and (cur_state ").append(nextRoom).append(") ")
+                                .append("(not (cur_state ").append(roomName).append(")) ")
                                 .append("(increase (total-cost) 1").append("))\n\t)\n\n\t");
+                        if(!nextRoom.equals("end")) {
+                            sb.append("(:action move-").append(nextRoom).append('-').append(roomName).append("\n\t")
+                                    .append(":precondition (cur_state ").append(nextRoom).append(")\n\t")
+                                    .append(":effect (and (cur_state ").append(roomName).append(") ")
+                                    .append("(not (cur_state ").append(nextRoom).append(")) ")
+                                    .append("(increase (total-cost) 1").append("))\n\t)\n\n\t");
+                        }
                     }
                 }
             }

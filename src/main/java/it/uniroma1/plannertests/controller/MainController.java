@@ -6,6 +6,7 @@
 package it.uniroma1.plannertests.controller;
 
 import it.uniroma1.plannertests.PlannerThread;
+import it.uniroma1.plannertests.command.AbstractPlannerCommand;
 import it.uniroma1.plannertests.model.Museo;
 import it.uniroma1.plannertests.writer.AbstractWriter;
 import it.uniroma1.plannertests.writer.NewPddlWriter;
@@ -22,7 +23,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 
 public class MainController implements Initializable {
 
@@ -66,6 +66,10 @@ public class MainController implements Initializable {
     private Button generaPddlNew;
     @FXML
     private Button ffNew;
+    @FXML
+    private Button symbav2Old;
+    @FXML
+    private Button symbav2New;
     
     @FXML
     private TextField pddlPath;
@@ -84,8 +88,9 @@ public class MainController implements Initializable {
     @FXML
     private ProgressIndicator progress;
     
-    private boolean fd;
-    private boolean symba;
+    private AbstractPlannerCommand command;
+    
+    public static Integer planners = 0b000;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -118,6 +123,15 @@ public class MainController implements Initializable {
             if(collegamenti == 3)
                 incrementaCollegamenti.setDisable(true);
             numeroCollegamenti.setText(Integer.toString(collegamenti));
+            decrementaStanze.setDisable(true);
+            incrementaStanze.setDisable(false);
+            numeroStanze.setText("5");
+            decrementaAttrazioni.setDisable(true);
+            incrementaAttrazioni.setDisable(false);
+            numeroAttrazioni.setText("50");
+            decrementaVisite.setDisable(true);
+            incrementaVisite.setDisable(false);
+            numeroVisite.setText("10");
         }
     }
 
@@ -127,9 +141,9 @@ public class MainController implements Initializable {
             incrementaStanze.setDisable(false);
         }
         int stanze = Integer.parseInt(numeroStanze.getText());
-        if(stanze > 10) {
+        if(stanze > 5) {
             stanze -= 5;
-            if(stanze == 10)
+            if(stanze == 5)
                 decrementaStanze.setDisable(true);
             numeroStanze.setText(Integer.toString(stanze));
         }
@@ -147,6 +161,12 @@ public class MainController implements Initializable {
             if(stanze == 30)
                 incrementaStanze.setDisable(true);
             numeroStanze.setText(Integer.toString(stanze));
+            decrementaAttrazioni.setDisable(true);
+            incrementaAttrazioni.setDisable(false);
+            numeroAttrazioni.setText("50");
+            decrementaVisite.setDisable(true);
+            incrementaVisite.setDisable(false);
+            numeroVisite.setText("10");
         }
     }
     
@@ -175,6 +195,9 @@ public class MainController implements Initializable {
             if(attrazioni == 200)
                 incrementaAttrazioni.setDisable(true);
             numeroAttrazioni.setText(Integer.toString(attrazioni));
+            decrementaVisite.setDisable(true);
+            incrementaVisite.setDisable(false);
+            numeroVisite.setText("10");
         }
     }
 
@@ -185,7 +208,7 @@ public class MainController implements Initializable {
         }
         int visite = Integer.parseInt(numeroVisite.getText());
         if(visite > 10) {
-            visite -= 10;
+            visite -= 5;
             if(visite == 10)
                 decrementaVisite.setDisable(true);
             numeroVisite.setText(Integer.toString(visite));
@@ -199,7 +222,7 @@ public class MainController implements Initializable {
         }
         int visite = Integer.parseInt(numeroVisite.getText());
         if(visite < 30) {
-            visite += 10;
+            visite += 5;
             if(visite == 30)
                 incrementaVisite.setDisable(true);
             numeroVisite.setText(Integer.toString(visite));
@@ -214,17 +237,6 @@ public class MainController implements Initializable {
         if(file != null && file.isDirectory()) {
             pddlPath.setText(file.getPath());
         }
-    }
-
-    @FXML
-    private void selectSymbaPath(ActionEvent event) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Seleziona la cartella per i PDDL");
-        File file = chooser.showOpenDialog(pddlPathButton.getScene().getWindow());
-        if(file != null) {
-            symbaPath.setText(file.getPath());
-        }
-        
     }
 
     @FXML
@@ -255,23 +267,22 @@ public class MainController implements Initializable {
         }
         ffOld.setDisable(false);
         symbaOld.setDisable(false);
+        symbav2Old.setDisable(false);
         ffNew.setDisable(true);
         SymbaNew.setDisable(true);
-        fd = false;
-        symba = false;
+        symbav2New.setDisable(true);
+        planners = 0b000;
         generaReportButton.setDisable(true);
-        numeroAttrazioni.setText("50");
+        //numeroAttrazioni.setText("50");
     }
 
     @FXML
     private void ffOldClicked(ActionEvent event) {
-        fd = true;
         execute("FD_FF");
     }
 
     @FXML
     private void symbaOldClicked(ActionEvent event) {
-        symba = true;
         execute("SYMBA2");
     }
     
@@ -291,24 +302,23 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         ffNew.setDisable(false);
-        SymbaNew.setDisable(false);
+        //SymbaNew.setDisable(false);
+        symbav2New.setDisable(false);
         ffOld.setDisable(true);
         symbaOld.setDisable(true);
-        fd = false;
-        symba = false;
+        symbav2Old.setDisable(true);
+        planners = 0b000;
         generaReportButton.setDisable(true);
-        numeroAttrazioni.setText("50");
+        //numeroAttrazioni.setText("50");
     }
     
     @FXML
     private void ffNewClicked(ActionEvent event) {
-        fd = true;
         execute("FD_FF");
     }
 
     @FXML
     private void SymbaNewClicked(ActionEvent event) {
-        symba = true;
         execute("SYMBA2");
     }
 
@@ -323,7 +333,7 @@ public class MainController implements Initializable {
                 .append(problemPath);
         System.out.println(sb.toString());
         
-        PlannerThread thread = new PlannerThread(sb.toString(), planner, folderPath, fd, symba, generaReportButton, progress);
+        PlannerThread thread = new PlannerThread(sb.toString(), planner, folderPath, generaReportButton, progress);
         thread.start();
     }
 
@@ -332,9 +342,19 @@ public class MainController implements Initializable {
         new ReportWriter(folderPath).writeReport();
     }
     
-    private void enableReport() {
-        if(fd && symba)
+    /*private void enableReport() {
+        if(fd && symba2)
             generaReportButton.setDisable(false);
+    }*/
+
+    @FXML
+    private void symbav2OldClicked(ActionEvent event) {
+        execute("SYMBA_new");
+    }
+
+    @FXML
+    private void symbav2NewClicked(ActionEvent event) {
+        execute("SYMBA_new");
     }
 
 }

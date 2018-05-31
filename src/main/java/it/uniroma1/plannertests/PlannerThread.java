@@ -5,6 +5,7 @@
  */
 package it.uniroma1.plannertests;
 
+import it.uniroma1.plannertests.controller.MainController;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -24,19 +25,16 @@ public class PlannerThread extends Thread{
     private final String folderPath;
     private BufferedWriter solutionWriter;
     
-    private boolean fd, symba;
-    private Button report;
-    private ProgressIndicator progress;
+    private final Button report;
+    private final ProgressIndicator progress;
     
     public PlannerThread(String execString, String planner, String folderPath,
-                        boolean fd, boolean symba, Button report, ProgressIndicator progress) {
+                         Button report, ProgressIndicator progress) {
         super();
         this.execString = execString;
         this.planner = planner;
         this.folderPath = folderPath;
         
-        this.fd = fd;
-        this.symba = symba;
         this.report = report;
         this.progress = progress;
     }
@@ -44,6 +42,7 @@ public class PlannerThread extends Thread{
     @Override
     public void run() {
         progress.setVisible(true);
+        System.out.println(MainController.planners);
         Process p;
         BufferedReader input;
         BufferedReader error;
@@ -57,40 +56,20 @@ public class PlannerThread extends Thread{
             String e;
             while((e = input.readLine()) != null) {
                 solutionWriter.append(e).append('\n');
-                /*if(e.contains("move")) {
-                    System.out.println(e);
-                    solutionWriter.append(e);
-                    solutionWriter.newLine();
-                }
-                if(e.contains("visit")) {
-                    System.out.println(e);
-                    solutionWriter.append(e);
-                    solutionWriter.newLine();
-                }
-                if(e.contains("Plan length")) {
-                    System.out.println(e);
-                    solutionWriter.append(e);
-                    solutionWriter.newLine();
-                }
-                if(e.contains("Plan cost")) {
-                    System.out.println(e);
-                    solutionWriter.append(e);
-                    solutionWriter.newLine();
-                }
-                if(e.contains("Duration:")) {
-                    solutionWriter.append(e);
-                }*/
             }
             solutionWriter.close();
             while((e = error.readLine()) != null)
                 System.err.println(e);
-            if(fd && symba)
+            switch(planner) {
+                case "FD_FF": MainController.planners |= 0b100; break;
+                case "SYMBA_new" : MainController.planners |= 0b001; break;
+            }
+            if(MainController.planners == 0b101) {
                 report.setDisable(false);
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
         progress.setVisible(false);
     }
-    
-    
 }
