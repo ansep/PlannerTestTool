@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public abstract class Stanza {
     private int id;

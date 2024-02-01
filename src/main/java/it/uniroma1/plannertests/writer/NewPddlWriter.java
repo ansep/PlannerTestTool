@@ -21,7 +21,7 @@ import java.util.Map;
 
 /**
  *
- * @author thomas
+ * @author ansep
  * Modifica con taglio del grafo
  */
 public class NewPddlWriter extends AbstractWriter{

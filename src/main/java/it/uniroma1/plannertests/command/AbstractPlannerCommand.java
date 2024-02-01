@@ -9,7 +9,7 @@ import it.uniroma1.plannertests.PlannerThread;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public abstract class AbstractPlannerCommand{
     

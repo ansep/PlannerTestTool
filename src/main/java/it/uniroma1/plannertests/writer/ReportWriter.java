@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public class ReportWriter {
     

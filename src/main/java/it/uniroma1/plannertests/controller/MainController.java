@@ -6,6 +6,7 @@
 package it.uniroma1.plannertests.controller;
 
 import it.uniroma1.plannertests.PlannerThread;
+import it.uniroma1.plannertests.PlannerThread;
 import it.uniroma1.plannertests.command.AbstractPlannerCommand;
 import it.uniroma1.plannertests.model.Museo;
 import it.uniroma1.plannertests.writer.AbstractWriter;

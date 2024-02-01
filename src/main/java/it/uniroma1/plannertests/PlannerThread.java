@@ -16,7 +16,7 @@ import javafx.scene.control.ProgressIndicator;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public class PlannerThread extends Thread{
     

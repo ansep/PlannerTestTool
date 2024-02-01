@@ -7,7 +7,7 @@ package it.uniroma1.plannertests.command;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public class Symba2Command extends AbstractPlannerCommand{
 

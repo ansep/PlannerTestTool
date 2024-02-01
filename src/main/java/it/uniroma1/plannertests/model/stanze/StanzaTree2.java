@@ -7,7 +7,7 @@ package it.uniroma1.plannertests.model.stanze;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public class StanzaTree2 extends StanzaTree{
 

@@ -9,7 +9,7 @@ import java.util.Random;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public class Attrazione {
     private int id;

@@ -14,7 +14,7 @@ import java.io.IOException;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public abstract class AbstractWriter {
     

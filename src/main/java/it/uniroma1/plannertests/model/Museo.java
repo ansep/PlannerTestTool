@@ -14,7 +14,7 @@ import java.util.Random;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public class Museo {
     

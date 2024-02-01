@@ -13,7 +13,7 @@ import java.util.Random;
 
 /**
  *
- * @author thomas
+ * @author ansep
  */
 public abstract class StanzaTree {
     protected int numStanze;
