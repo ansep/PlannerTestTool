@@ -28,24 +28,26 @@ From the UI customize the options, select the target folder for generated PDDL f
 
 The following docker command gets in input the domain and problem files and generates the file _plan.sas_. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored and the `<ALGORITHM>` with one from the list below.
 
-`docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" aibasel/downward --plan-file /pddl/plan.sas --alias <ALGORITHM> /pddl/domain.pddl /pddl/problem.pddl`
+`docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" aibasel/downward [--search-time-limit <TIME_LIMIT>] --plan-file /pddl/plan.sas --alias <ALGORITHM> /pddl/domain.pddl /pddl/problem.pddl`
 
 Available algorithms for the --alias flag:
 
-    lama
-    lama-first
-    seq-opt-bjolp
-    seq-opt-fdss-1
-    seq-opt-fdss-2
-    seq-opt-lmcut
-    seq-opt-merge-and-shrink
-    seq-sat-fd-autotune-1
-    seq-sat-fd-autotune-2
-    seq-sat-fdss-1
-    seq-sat-fdss-2
-    seq-sat-fdss-2014
-    seq-sat-fdss-2018
-    seq-sat-lama-2011
+| Algorithm                | Description                                                    | Needs `--search-time-limit` flag |
+| ------------------------ | -------------------------------------------------------------- | -------------------------------- |
+| lama                     | Lazy A\*                                                       | No                               |
+| lama-first               | Lazy A\* with first solution                                   | No                               |
+| seq-opt-bjolp            | Sequential optimization with BJO-like pruning                  | No                               |
+| seq-opt-fdss-1           | Sequential optimization with Fast Downward single search       | Yes                              |
+| seq-opt-fdss-2           | Sequential optimization with Fast Downward single search       | Yes                              |
+| seq-opt-lmcut            | Sequential optimization with landmark-cut heuristic            | No                               |
+| seq-opt-merge-and-shrink | Sequential optimization with merge-and-shrink heuristic        | Yes                              |
+| seq-sat-fd-autotune-1    | Sequential satisficing with Fast Downward autotuned search     | No                               |
+| seq-sat-fd-autotune-2    | Sequential satisficing with Fast Downward autotuned search     | No                               |
+| seq-sat-fdss-1           | Sequential satisficing with Fast Downward single search        | Yes                              |
+| seq-sat-fdss-2           | Sequential satisficing with Fast Downward single search        | Yes                              |
+| seq-sat-fdss-2014        | Sequential satisficing with Fast Downward single search (2014) | Yes                              |
+| seq-sat-fdss-2018        | Sequential satisficing with Fast Downward single search (2018) | Yes                              |
+| seq-sat-lama-2011        | Sequential satisficing with Lazy A\* (2011)                    | No                               |
 
 ## License
 
