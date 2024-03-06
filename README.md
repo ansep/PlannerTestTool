@@ -22,11 +22,14 @@ The Planner Test Tool is a Java-based application that generates PDDL (Planning 
 
 ### Generation of domain and problem PDDL files
 
-From the UI customize the options, select the target folder for generated PDDL files and click on _Genera PDDL_
+From the UI customize the options, select the target folder for generated PDDL files and click on _Genera PDDL_.
 
-### Running the planner
+If you want to use custom domain and problem files you must rename them to _domain.pddl_ and _problem.pddl_ and place them in the same folder.
 
-The following docker command gets in input the domain and problem files and generates the file _plan.sas_. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored and the `<ALGORITHM>` with one from the list below.
+### Running the planner with Fast Downward
+
+The following docker command gets in input the domain and problem files and generates the file _plan.sas_ by using Fast Downward planner. The planner can be changed by using the `--alias` flag with the desired algorithm. The `--search-time-limit` flag sets the time limit for the search algorithm in seconds and is required for some algorithms, as shown in the table below.
+Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored and the `<ALGORITHM>` with one from the list below.
 
 `docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" aibasel/downward [--search-time-limit <TIME_LIMIT>] --plan-file /pddl/plan.sas --alias <ALGORITHM> /pddl/domain.pddl /pddl/problem.pddl`
 
@@ -48,6 +51,12 @@ Available algorithms for the --alias flag:
 | seq-sat-fdss-2014        | Sequential satisficing with Fast Downward single search (2014) | Yes                              |
 | seq-sat-fdss-2018        | Sequential satisficing with Fast Downward single search (2018) | Yes                              |
 | seq-sat-lama-2011        | Sequential satisficing with Lazy A\* (2011)                    | No                               |
+
+### Running the planner with SymBA\* 2 algorithm
+
+Use the following command to run the planner with the SymBA\* 2 algorithm. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored.
+
+`docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" ansep/symba2-64bit`
 
 ## License
 
