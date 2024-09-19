@@ -26,6 +26,8 @@ From the UI customize the options, select the target folder for generated PDDL f
 
 If you want to use custom domain and problem files you must rename them to _domain.pddl_ and _problem.pddl_ and place them in the same folder.
 
+At the end of any algorithm, you will find the generated output file _plan.sas_ in the same folder.
+
 ### Running the planner with Fast Downward
 
 The following docker command gets in input the domain and problem files and generates the file _plan.sas_ by using Fast Downward planner. The planner can be changed by using the `--alias` flag with the desired algorithm. The `--search-time-limit` flag sets the time limit for the search algorithm in seconds and is required for some algorithms, as shown in the table below.
@@ -57,6 +59,18 @@ Available algorithms for the --alias flag:
 Use the following command to run the planner with the SymBA\* 2 algorithm. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored.
 
 `docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" ansep/symba2-64bit`
+
+### Running the planner with Complementary2 algorithm
+
+Use the following command to run the planner with the Complementary2 algorithm. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored.
+
+`docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" ansep/complementary2`
+
+### Running the planner with Ragnarok algorithm
+
+Use the following command to run the planner with the Ragnarok algorithm. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored.
+
+`docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" ansep/ragnarok`
 
 ## License
 
