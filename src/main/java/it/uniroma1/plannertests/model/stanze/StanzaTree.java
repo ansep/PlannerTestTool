@@ -20,48 +20,48 @@ public abstract class StanzaTree {
     protected Deque<Stanza> stanze;
     protected Random random;
     protected Stanza[] stanzeArray;
-    
+
     public StanzaTree(int stanze) {
-        this.numStanze = 35;
+        this.numStanze = stanze;
         this.stanze = new ArrayDeque<>();
         this.random = new Random();
         this.stanzeArray = new Stanza[numStanze];
         initRooms();
         initTree();
     }
-    
+
     public abstract void initRooms();
-    
+
     public final void initTree() {
         List<Stanza> grey = new ArrayList<>();
         grey.add(stanze.pop());
-        while(!(grey.isEmpty() || stanze.isEmpty())) {
-            //System.out.println(this.stanze);
+        while (!(grey.isEmpty() || stanze.isEmpty())) {
+            // System.out.println(this.stanze);
             Stanza s = grey.remove(0);
-            //System.out.print(s.toString() + ": ");
-            for(int i = 0; i < s.getStanzeAdiacenti().length; i++) {
-                if(stanze.isEmpty())
+            // System.out.print(s.toString() + ": ");
+            for (int i = 0; i < s.getStanzeAdiacenti().length; i++) {
+                if (stanze.isEmpty())
                     break;
                 Stanza m = stanze.pop();
                 grey.add(m);
                 s.addStanzaAdiacente(m);
-                //System.out.println(m + ", ");
+                // System.out.println(m + ", ");
             }
-            //System.out.println();
+            // System.out.println();
         }
     }
-    
+
     public Stanza[] getStanze() {
         return this.stanzeArray;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(Stanza s : stanzeArray) {
+        for (Stanza s : stanzeArray) {
             sb.append(s.toString()).append(": ");
-            for(Stanza ad : s.getStanzeAdiacenti()) {
-                if(ad != null) {
+            for (Stanza ad : s.getStanzeAdiacenti()) {
+                if (ad != null) {
                     sb.append(ad.toString()).append(", ");
                 }
             }
@@ -69,5 +69,5 @@ public abstract class StanzaTree {
         }
         return sb.toString();
     }
-    
+
 }

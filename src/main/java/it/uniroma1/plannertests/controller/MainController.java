@@ -6,12 +6,12 @@
 package it.uniroma1.plannertests.controller;
 
 import it.uniroma1.plannertests.PlannerThread;
-import it.uniroma1.plannertests.PlannerThread;
 import it.uniroma1.plannertests.command.AbstractPlannerCommand;
 import it.uniroma1.plannertests.model.Museo;
 import it.uniroma1.plannertests.writer.AbstractWriter;
 import it.uniroma1.plannertests.writer.NewPddlWriter;
 import it.uniroma1.plannertests.writer.PddlGroundedWriter;
+import it.uniroma1.plannertests.writer.ParametricPddlWriter;
 import it.uniroma1.plannertests.writer.ReportWriter;
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +30,7 @@ public class MainController implements Initializable {
     private String folderPath;
     private String domainPath;
     private String problemPath;
-    
+
     @FXML
     private TextField numeroCollegamenti;
     @FXML
@@ -71,7 +71,8 @@ public class MainController implements Initializable {
     private Button symbav2Old;
     @FXML
     private Button symbav2New;
-    
+    @FXML
+    private Button generaPddlParametric;
     @FXML
     private TextField pddlPath;
     @FXML
@@ -88,25 +89,25 @@ public class MainController implements Initializable {
     private Button generaReportButton;
     @FXML
     private ProgressIndicator progress;
-    
+
     private AbstractPlannerCommand command;
-    
+
     public static Integer planners = 0b000;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+
     }
-    
+
     @FXML
     private void decrementaCollegamentiClicked(ActionEvent event) {
-        if(incrementaCollegamenti.isDisable()) {
+        if (incrementaCollegamenti.isDisable()) {
             incrementaCollegamenti.setDisable(false);
         }
         int collegamenti = Integer.parseInt(numeroCollegamenti.getText());
-        if(collegamenti > 1) {
+        if (collegamenti > 1) {
             collegamenti -= 1;
-            if(collegamenti == 1)
+            if (collegamenti == 1)
                 decrementaCollegamenti.setDisable(true);
             numeroCollegamenti.setText(Integer.toString(collegamenti));
         }
@@ -114,14 +115,14 @@ public class MainController implements Initializable {
 
     @FXML
     private void incrementaCollegamentiClicked(ActionEvent event) {
-        if(decrementaCollegamenti.isDisable()) {
+        if (decrementaCollegamenti.isDisable()) {
             decrementaCollegamenti.setDisable(false);
         }
-        
+
         int collegamenti = Integer.parseInt(numeroCollegamenti.getText());
-        if(collegamenti < 3) {
+        if (collegamenti < 3) {
             collegamenti += 1;
-            if(collegamenti == 3)
+            if (collegamenti == 3)
                 incrementaCollegamenti.setDisable(true);
             numeroCollegamenti.setText(Integer.toString(collegamenti));
             decrementaStanze.setDisable(true);
@@ -138,13 +139,13 @@ public class MainController implements Initializable {
 
     @FXML
     private void decrementaStanzeClicked(ActionEvent event) {
-        if(incrementaStanze.isDisable()) {
+        if (incrementaStanze.isDisable()) {
             incrementaStanze.setDisable(false);
         }
         int stanze = Integer.parseInt(numeroStanze.getText());
-        if(stanze > 5) {
+        if (stanze > 5) {
             stanze -= 5;
-            if(stanze == 5)
+            if (stanze == 5)
                 decrementaStanze.setDisable(true);
             numeroStanze.setText(Integer.toString(stanze));
         }
@@ -152,14 +153,14 @@ public class MainController implements Initializable {
 
     @FXML
     private void incrementaStanzeClicked(ActionEvent event) {
-        if(decrementaStanze.isDisable()) {
+        if (decrementaStanze.isDisable()) {
             decrementaStanze.setDisable(false);
         }
-        
+
         int stanze = Integer.parseInt(numeroStanze.getText());
-        if(stanze < 30) {
+        if (stanze < 30) {
             stanze += 5;
-            if(stanze == 30)
+            if (stanze == 30)
                 incrementaStanze.setDisable(true);
             numeroStanze.setText(Integer.toString(stanze));
             decrementaAttrazioni.setDisable(true);
@@ -170,16 +171,16 @@ public class MainController implements Initializable {
             numeroVisite.setText("10");
         }
     }
-    
+
     @FXML
     private void decrementaAttrazioniClicked(ActionEvent event) {
-        if(incrementaAttrazioni.isDisable()) {
+        if (incrementaAttrazioni.isDisable()) {
             incrementaAttrazioni.setDisable(false);
         }
         int attrazioni = Integer.parseInt(numeroAttrazioni.getText());
-        if(attrazioni > 50) {
+        if (attrazioni > 50) {
             attrazioni -= 50;
-            if(attrazioni == 50)
+            if (attrazioni == 50)
                 decrementaAttrazioni.setDisable(true);
             numeroAttrazioni.setText(Integer.toString(attrazioni));
         }
@@ -187,13 +188,13 @@ public class MainController implements Initializable {
 
     @FXML
     private void incrementaAttrazioniClicked(ActionEvent event) {
-        if(decrementaAttrazioni.isDisable()) {
+        if (decrementaAttrazioni.isDisable()) {
             decrementaAttrazioni.setDisable(false);
         }
         int attrazioni = Integer.parseInt(numeroAttrazioni.getText());
-        if(attrazioni < 200) {
+        if (attrazioni < 200) {
             attrazioni += 50;
-            if(attrazioni == 200)
+            if (attrazioni == 200)
                 incrementaAttrazioni.setDisable(true);
             numeroAttrazioni.setText(Integer.toString(attrazioni));
             decrementaVisite.setDisable(true);
@@ -204,13 +205,13 @@ public class MainController implements Initializable {
 
     @FXML
     private void decrementaVisiteClicked(ActionEvent event) {
-        if(incrementaVisite.isDisable()) {
+        if (incrementaVisite.isDisable()) {
             incrementaVisite.setDisable(false);
         }
         int visite = Integer.parseInt(numeroVisite.getText());
-        if(visite > 10) {
+        if (visite > 10) {
             visite -= 5;
-            if(visite == 10)
+            if (visite == 10)
                 decrementaVisite.setDisable(true);
             numeroVisite.setText(Integer.toString(visite));
         }
@@ -218,24 +219,24 @@ public class MainController implements Initializable {
 
     @FXML
     private void incrementaVisiteClicked(ActionEvent event) {
-        if(decrementaVisite.isDisable()) {
+        if (decrementaVisite.isDisable()) {
             decrementaVisite.setDisable(false);
         }
         int visite = Integer.parseInt(numeroVisite.getText());
-        if(visite < 30) {
+        if (visite < 30) {
             visite += 5;
-            if(visite == 30)
+            if (visite == 30)
                 incrementaVisite.setDisable(true);
             numeroVisite.setText(Integer.toString(visite));
         }
     }
-    
+
     @FXML
     private void selectPddlPath(ActionEvent event) {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Seleziona la cartella per i PDDL");
         File file = chooser.showDialog(pddlPathButton.getScene().getWindow());
-        if(file != null && file.isDirectory()) {
+        if (file != null && file.isDirectory()) {
             pddlPath.setText(file.getPath());
         }
     }
@@ -245,7 +246,7 @@ public class MainController implements Initializable {
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Seleziona la cartella con gli script");
         File file = chooser.showDialog(pddlPathButton.getScene().getWindow());
-        if(file != null && file.isDirectory()) {
+        if (file != null && file.isDirectory()) {
             System.out.println(file.getPath());
             fdPath.setText(file.getPath());
         }
@@ -263,7 +264,7 @@ public class MainController implements Initializable {
             folderPath = writer.getFolderPath();
             domainPath = writer.writeDomain();
             problemPath = writer.writeProblem();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         ffOld.setDisable(false);
@@ -274,7 +275,7 @@ public class MainController implements Initializable {
         symbav2New.setDisable(true);
         planners = 0b000;
         generaReportButton.setDisable(true);
-        //numeroAttrazioni.setText("50");
+        // numeroAttrazioni.setText("50");
     }
 
     @FXML
@@ -286,7 +287,7 @@ public class MainController implements Initializable {
     private void symbaOldClicked(ActionEvent event) {
         execute("SYMBA2");
     }
-    
+
     @FXML
     private void generaPddlNewClicked(ActionEvent event) {
         int collegamenti = Integer.parseInt(numeroCollegamenti.getText());
@@ -299,20 +300,20 @@ public class MainController implements Initializable {
             folderPath = writer.getFolderPath();
             domainPath = writer.writeDomain();
             problemPath = writer.writeProblem();
-        } catch(IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         ffNew.setDisable(false);
-        //SymbaNew.setDisable(false);
+        // SymbaNew.setDisable(false);
         symbav2New.setDisable(false);
         ffOld.setDisable(true);
         symbaOld.setDisable(true);
         symbav2Old.setDisable(true);
         planners = 0b000;
         generaReportButton.setDisable(true);
-        //numeroAttrazioni.setText("50");
+        // numeroAttrazioni.setText("50");
     }
-    
+
     @FXML
     private void ffNewClicked(ActionEvent event) {
         execute("FD_FF");
@@ -323,17 +324,38 @@ public class MainController implements Initializable {
         execute("SYMBA2");
     }
 
+    @FXML
+    private void generaPddlParametricClicked(ActionEvent event) {
+        int collegamenti = Integer.parseInt(numeroCollegamenti.getText());
+        int stanze = Integer.parseInt(numeroStanze.getText());
+        int attrazioni = Integer.parseInt(numeroAttrazioni.getText());
+        int visite = Integer.parseInt(numeroVisite.getText());
+        System.out.println(collegamenti + " " + stanze + " " + attrazioni + " " + visite);
+        Museo museo = Museo.getInstance(collegamenti, stanze, attrazioni);
+        try {
+            AbstractWriter writer = new ParametricPddlWriter(museo, visite, pddlPath.getText());
+            folderPath = writer.getFolderPath();
+            domainPath = writer.writeDomain();
+            problemPath = writer.writeProblem();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        planners = 0b000;
+        generaReportButton.setDisable(true);
+        // numeroAttrazioni.setText("50");
+    }
+
     private void execute(String planner) {
         String path = fdPath.getText();
         System.out.println(path);
-        String exec = "/run_"+planner;
+        String exec = "/run_" + planner;
         StringBuilder sb = new StringBuilder();
         sb.append(path)
                 .append(exec).append(" ")
                 .append(domainPath).append(" ")
                 .append(problemPath);
         System.out.println(sb.toString());
-        
+
         PlannerThread thread = new PlannerThread(sb.toString(), planner, folderPath, generaReportButton, progress);
         thread.start();
     }
@@ -342,11 +364,13 @@ public class MainController implements Initializable {
     private void generaReport(ActionEvent event) {
         new ReportWriter(folderPath).writeReport();
     }
-    
-    /*private void enableReport() {
-        if(fd && symba2)
-            generaReportButton.setDisable(false);
-    }*/
+
+    /*
+     * private void enableReport() {
+     * if(fd && symba2)
+     * generaReportButton.setDisable(false);
+     * }
+     */
 
     @FXML
     private void symbav2OldClicked(ActionEvent event) {
