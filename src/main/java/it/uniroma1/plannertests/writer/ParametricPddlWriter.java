@@ -31,29 +31,54 @@ public class ParametricPddlWriter extends AbstractWriter {
         StringBuilder sb = new StringBuilder();
         try {
             sb.append("(define (domain Museum)\n\t")
-                    .append("(:requirements :typing :equality :fluents)\n\t")
+                    .append("(:requirements :typing :equality)\n\t")
                     .append("(:types topology_state visit_state - state attraction)\n\t")
                     .append("(:predicates\n\t\t")
                     .append("(cur_state ?s - state)\n\t\t")
                     .append("(visited ?a - attraction)\n\t\t")
+                    .append("(cost_10 ?a - attraction)\n\t\t")
+                    .append("(cost_50 ?a - attraction)\n\t\t")
+                    .append("(cost_100 ?a - attraction)\n\t\t")
                     .append("(at ?a - attraction ?s - topology_state)\n\t\t")
-                    .append("(connected ?from - topology_state ?to - topology_state)\n\t)\n\t")
+                    .append("(connected ?from - topology_state ?to - topology_state)\n\t\t")
+                    .append("(next_visit_state ?v1 - visit_state ?v2 - visit_state)\n\t)\n\t")
                     .append("(:functions\n\t\t")
-                    .append("(total-cost)\n\t\t")
-                    .append("(cost ?a - attraction)\n\t)\n\t");
+                    .append("(total-cost)\n\t)\n\t");
 
-            // Define parameterized visit action
-            sb.append("(:action visit\n\t")
-                    .append(":parameters (?a - attraction ?s - topology_state ?v1 - visit_state ?v2 - visit_state)\n\t")
-                    .append(":precondition (and (cur_state ?s) (cur_state ?v1) (not (visited ?a)) (at ?a ?s))\n\t")
-                    .append(":effect (and (cur_state ?v2) (not (cur_state ?v1)) (visited ?a) ")
-                    .append("(increase (total-cost) (cost ?a)))\n\t)\n\t");
+            // // Define parameterized visit action
+            // sb.append("(:action visit\n\t\t")
+            // .append(":parameters (?a - attraction ?s - topology_state ?v1 - visit_state
+            // ?v2 - visit_state)\n\t\t")
+            // .append(":precondition (and (cur_state ?s) (cur_state ?v1) (not (visited ?a))
+            // (at ?a ?s))\n\t\t")
+            // .append(":effect (and (cur_state ?v2) (not (cur_state ?v1)) (visited
+            // ?a)\n\t\t\t")
+            // .append("(when (cost_10 ?a) (increase (total-cost) 10))\n\t\t\t")
+            // .append("(when (cost_50 ?a) (increase (total-cost) 50))\n\t\t\t")
+            // .append("(when (cost_100 ?a) (increase (total-cost) 100))\n\t\t")
+            // .append(")\n\t)\n\n\t");
+
+            // Define cost-dependent visit actions
+            sb.append("(:action visit-cost-10\n\t\t")
+                    .append(":parameters (?a - attraction ?s - topology_state ?v1 - visit_state ?v2 - visit_state)\n\t\t")
+                    .append(":precondition (and (cur_state ?s) (cur_state ?v1) (not (visited ?a)) (at ?a ?s) (cost_10 ?a) (next_visit_state ?v1 ?v2))\n\t\t")
+                    .append(":effect (and (cur_state ?v2) (not (cur_state ?v1)) (visited ?a) (increase (total-cost) 10))\n\t)\n\n\t");
+
+            sb.append("(:action visit-cost-50\n\t\t")
+                    .append(":parameters (?a - attraction ?s - topology_state ?v1 - visit_state ?v2 - visit_state)\n\t\t")
+                    .append(":precondition (and (cur_state ?s) (cur_state ?v1) (not (visited ?a)) (at ?a ?s) (cost_50 ?a) (next_visit_state ?v1 ?v2))\n\t\t")
+                    .append(":effect (and (cur_state ?v2) (not (cur_state ?v1)) (visited ?a) (increase (total-cost) 50))\n\t)\n\n\t");
+
+            sb.append("(:action visit-cost-100\n\t\t")
+                    .append(":parameters (?a - attraction ?s - topology_state ?v1 - visit_state ?v2 - visit_state)\n\t\t")
+                    .append(":precondition (and (cur_state ?s) (cur_state ?v1) (not (visited ?a)) (at ?a ?s) (cost_100 ?a) (next_visit_state ?v1 ?v2))\n\t\t")
+                    .append(":effect (and (cur_state ?v2) (not (cur_state ?v1)) (visited ?a) (increase (total-cost) 100))\n\t)\n\n\t");
 
             // Define parameterized move action
-            sb.append("(:action move\n\t")
-                    .append(":parameters (?from - topology_state ?to - topology_state)\n\t")
-                    .append(":precondition (and (cur_state ?from) (connected ?from ?to))\n\t")
-                    .append(":effect (and (cur_state ?to) (not (cur_state ?from)) (increase (total-cost) 1))\n\t)\n\n");
+            sb.append("(:action move\n\t\t")
+                    .append(":parameters (?from - topology_state ?to - topology_state)\n\t\t")
+                    .append(":precondition (and (cur_state ?from) (connected ?from ?to))\n\t\t")
+                    .append(":effect (and (cur_state ?to) (not (cur_state ?from)) (increase (total-cost) 1))\n\t)\n");
 
             sb.append(")");
             domainWriter.write(sb.toString());
@@ -96,7 +121,17 @@ public class ParametricPddlWriter extends AbstractWriter {
                 String roomName = s.toString();
                 for (Attrazione a : s.getAttrazioni()) {
                     sb.append("\t\t(at ").append(a.toString()).append(" ").append(roomName).append(")\n");
-                    sb.append("\t\t(= (cost ").append(a.toString()).append(") ").append(a.getRating()).append(")\n");
+                    switch (a.getRating()) {
+                        case 10:
+                            sb.append("\t\t(cost_10 ").append(a.toString()).append(")\n");
+                            break;
+                        case 50:
+                            sb.append("\t\t(cost_50 ").append(a.toString()).append(")\n");
+                            break;
+                        case 100:
+                            sb.append("\t\t(cost_100 ").append(a.toString()).append(")\n");
+                            break;
+                    }
                 }
             }
 
@@ -111,7 +146,12 @@ public class ParametricPddlWriter extends AbstractWriter {
                 }
             }
 
-            sb.append("\t)\n\n");
+            // Define 'next_visit_state' predicate
+            for (int i = 0; i < visite; i++) {
+                sb.append("\t\t(next_visit_state v").append(i).append(" v").append(i + 1).append(")\n");
+            }
+
+            sb.append("\t)\n\n\t");
             sb.append("(:goal\n\t\t(and\n\t\t(cur_state v").append(visite).append(")\n\t\t)\n\t)\n");
             sb.append("(:metric minimize (total-cost))\n)");
             problemWriter.write(sb.toString());
