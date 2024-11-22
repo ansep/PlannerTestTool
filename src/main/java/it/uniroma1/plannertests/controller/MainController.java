@@ -68,10 +68,6 @@ public class MainController implements Initializable {
     @FXML
     private Button ffNew;
     @FXML
-    private Button symbav2Old;
-    @FXML
-    private Button symbav2New;
-    @FXML
     private Button generaPddlParametric;
     @FXML
     private TextField pddlPath;
@@ -269,10 +265,8 @@ public class MainController implements Initializable {
         }
         ffOld.setDisable(false);
         symbaOld.setDisable(false);
-        symbav2Old.setDisable(false);
         ffNew.setDisable(true);
         SymbaNew.setDisable(true);
-        symbav2New.setDisable(true);
         planners = 0b000;
         generaReportButton.setDisable(true);
         // numeroAttrazioni.setText("50");
@@ -304,11 +298,9 @@ public class MainController implements Initializable {
             e.printStackTrace();
         }
         ffNew.setDisable(false);
-        // SymbaNew.setDisable(false);
-        symbav2New.setDisable(false);
+        SymbaNew.setDisable(false);
         ffOld.setDisable(true);
         symbaOld.setDisable(true);
-        symbav2Old.setDisable(true);
         planners = 0b000;
         generaReportButton.setDisable(true);
         // numeroAttrazioni.setText("50");
@@ -371,15 +363,5 @@ public class MainController implements Initializable {
      * generaReportButton.setDisable(false);
      * }
      */
-
-    @FXML
-    private void symbav2OldClicked(ActionEvent event) {
-        execute("SYMBA_new");
-    }
-
-    @FXML
-    private void symbav2NewClicked(ActionEvent event) {
-        execute("SYMBA_new");
-    }
 
 }
