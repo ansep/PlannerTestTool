@@ -13,10 +13,16 @@ import it.uniroma1.plannertests.writer.NewPddlWriter;
 import it.uniroma1.plannertests.writer.PddlGroundedWriter;
 import it.uniroma1.plannertests.writer.ParametricPddlWriter;
 import it.uniroma1.plannertests.writer.ReportWriter;
+import it.uniroma1.plannertests.writer.WriteTimer;
+
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+
+import org.json.JSONObject;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -89,6 +95,8 @@ public class MainController implements Initializable {
     private AbstractPlannerCommand command;
 
     public static Integer planners = 0b000;
+
+    private WriteTimer timer = new WriteTimer();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -258,8 +266,22 @@ public class MainController implements Initializable {
         try {
             AbstractWriter writer = new PddlGroundedWriter(museo, visite, pddlPath.getText());
             folderPath = writer.getFolderPath();
+            timer.start();
             domainPath = writer.writeDomain();
             problemPath = writer.writeProblem();
+            long duration = timer.stop();
+            System.out.println("OldGrounded PDDL files generated successfully in " + duration + "ms and saved in "
+                    + folderPath);
+            JSONObject json = new JSONObject();
+            json.put("type", "old");
+            json.put("number_of_rooms", stanze);
+            json.put("number_of_attractions", attrazioni);
+            json.put("number_of_links", collegamenti);
+            json.put("number_of_visits", visite);
+            json.put("generation_time_ms", duration);
+            try (FileWriter file = new FileWriter(folderPath + "/generation_info.json")) {
+                file.write(json.toString(4));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -292,8 +314,22 @@ public class MainController implements Initializable {
         try {
             AbstractWriter writer = new NewPddlWriter(museo, visite, pddlPath.getText());
             folderPath = writer.getFolderPath();
+            timer.start();
             domainPath = writer.writeDomain();
             problemPath = writer.writeProblem();
+            long duration = timer.stop();
+            System.out.println("New PDDL files generated successfully in " + duration + "ms and saved in "
+                    + folderPath);
+            JSONObject json = new JSONObject();
+            json.put("type", "new");
+            json.put("number_of_rooms", stanze);
+            json.put("number_of_attractions", attrazioni);
+            json.put("number_of_links", collegamenti);
+            json.put("number_of_visits", visite);
+            json.put("generation_time_ms", duration);
+            try (FileWriter file = new FileWriter(folderPath + "/generation_info.json")) {
+                file.write(json.toString(4));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -327,8 +363,22 @@ public class MainController implements Initializable {
         try {
             AbstractWriter writer = new ParametricPddlWriter(museo, visite, pddlPath.getText());
             folderPath = writer.getFolderPath();
+            timer.start();
             domainPath = writer.writeDomain();
             problemPath = writer.writeProblem();
+            long duration = timer.stop();
+            System.out.println("Parametric PDDL files generated successfully in " + duration + "ms and saved in "
+                    + folderPath);
+            JSONObject json = new JSONObject();
+            json.put("type", "parametric");
+            json.put("number_of_rooms", stanze);
+            json.put("number_of_attractions", attrazioni);
+            json.put("number_of_links", collegamenti);
+            json.put("number_of_visits", visite);
+            json.put("generation_time_ms", duration);
+            try (FileWriter file = new FileWriter(folderPath + "/generation_info.json")) {
+                file.write(json.toString(4));
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
