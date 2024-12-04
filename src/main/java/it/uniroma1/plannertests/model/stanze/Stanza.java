@@ -16,39 +16,37 @@ import java.util.List;
 public abstract class Stanza {
     private int id;
     private List<Attrazione> attrazioni;
-    protected Stanza[] stanzeAdiacenti;
-    
+    protected List<Stanza> stanzeAdiacenti;
+
     public Stanza(int id) {
         this.id = id;
         this.attrazioni = new ArrayList<>();
     }
-    
+
     public int getId() {
         return this.id;
     }
-    
+
     public void addAttrazione(Attrazione a) {
         this.attrazioni.add(a);
     }
-    
+
     public List<Attrazione> getAttrazioni() {
         return this.attrazioni;
     }
-    
+
     public void deleteAttrazioni() {
         this.attrazioni.clear();
     }
-    
+
     public void addStanzaAdiacente(Stanza s) {
-        for(int i = 0; i < stanzeAdiacenti.length; i++) {
-            if(stanzeAdiacenti[i] == null) {
-                stanzeAdiacenti[i] = s;
-                break;
-            }
+        if (this.stanzeAdiacenti == null) {
+            this.stanzeAdiacenti = new ArrayList<>();
         }
+        this.stanzeAdiacenti.add(s);
     }
-    
-    public Stanza[] getStanzeAdiacenti() {
+
+    public List<Stanza> getStanzeAdiacenti() {
         return this.stanzeAdiacenti;
     }
 

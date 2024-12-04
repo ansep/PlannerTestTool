@@ -21,6 +21,9 @@ public abstract class StanzaTree {
     protected Random random;
     protected Stanza[] stanzeArray;
 
+    public StanzaTree() {
+    }
+
     public StanzaTree(int stanze) {
         this.numStanze = stanze;
         this.stanze = new ArrayDeque<>();
@@ -39,7 +42,7 @@ public abstract class StanzaTree {
             // System.out.println(this.stanze);
             Stanza s = grey.remove(0);
             // System.out.print(s.toString() + ": ");
-            for (int i = 0; i < s.getStanzeAdiacenti().length; i++) {
+            for (int i = 0; i < 2; i++) {
                 if (stanze.isEmpty())
                     break;
                 Stanza m = stanze.pop();

@@ -15,20 +15,25 @@ public class StanzaTree3 extends StanzaTree {
         super(stanze);
     }
 
+    public StanzaTree3(Stanza[] stanze) {
+        super(stanze.length);
+        this.stanzeArray = stanze;
+    }
+
     @Override
     public void initRooms() {
-        for(int i = 0; i < numStanze; i++) {
+        for (int i = 0; i < numStanze; i++) {
             int c = random.nextInt(10);
             Stanza s;
-            if(c < 2)
-                s = new Stanza3(i+1);
-            else if(c < 5)
-                s = new Stanza2(i+1);
+            if (c < 2)
+                s = new Stanza3(i + 1);
+            else if (c < 5)
+                s = new Stanza2(i + 1);
             else
-                s = new Stanza1(i+1);
+                s = new Stanza1(i + 1);
             this.stanze.add(s);
             stanzeArray[i] = s;
         }
     }
-    
+
 }

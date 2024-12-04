@@ -14,7 +14,7 @@ import java.util.Random;
 public class Attrazione {
     private int id;
     private int rating;
-    private int[] ratings = new int[]{10,50,100};
+    private int[] ratings = new int[] { 10, 50, 100 };
     private Random random;
 
     public Attrazione(int id) {
@@ -22,15 +22,19 @@ public class Attrazione {
         random = new Random();
         this.rating = ratings[random.nextInt(3)];
     }
-    
+
     public int getId() {
         return this.id;
     }
-    
+
     public int getRating() {
         return this.rating;
     }
-    
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
     @Override
     public String toString() {
         return "attr_" + this.id;

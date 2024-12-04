@@ -5,6 +5,8 @@
  */
 package it.uniroma1.plannertests.model.stanze;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author ansep
@@ -14,7 +16,7 @@ public class Stanza1 extends Stanza {
     
     public Stanza1(int id) {
         super(id);
-        stanzeAdiacenti = new Stanza[1];
+        stanzeAdiacenti = new ArrayList<>();
     }
     
 }
