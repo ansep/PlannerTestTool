@@ -4,9 +4,11 @@ import it.uniroma1.plannertests.model.Attrazione;
 import it.uniroma1.plannertests.model.Museo;
 import it.uniroma1.plannertests.model.stanze.Stanza;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public class ParametricPddlWriter extends AbstractWriter {
 
@@ -18,12 +20,15 @@ public class ParametricPddlWriter extends AbstractWriter {
 
     @Override
     protected String createFolder() {
-        StringBuilder sb = new StringBuilder();
-        sb.append('/').append(museo.getNome()).append('_')
-                .append(visite).append("_parametric");
-        File f = new File(basePath + sb.toString());
-        f.mkdir();
-        return f.getPath();
+        String folderName = museo.getNome() + "_" + visite + "_parametric";
+        Path folderPath = Paths.get(basePath, folderName);
+        System.out.println("Creating folder: " + folderPath.toString());
+        try {
+            Files.createDirectories(folderPath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return folderPath.toString();
     }
 
     @Override

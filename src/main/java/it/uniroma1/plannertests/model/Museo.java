@@ -50,7 +50,7 @@ public class Museo {
 
     public static synchronized Museo getInstance(int collegamenti, int stanze, int attrazioni) {
         if (instance == null || instance.getCollegamenti() != collegamenti) {
-            System.out.println("Nuovo museo generato");
+            System.out.println("Generazione di un nuovo museo");
             instance = new Museo(collegamenti, stanze, attrazioni);
             return instance;
         }
@@ -81,7 +81,7 @@ public class Museo {
                     instance.getStanze()[stanza].addAttrazione(a);
                 }
             }
-            instance.setNumeroAttrazini(attrazioni);
+            instance.setNumeroAttrazioni(attrazioni);
             System.out.println("Numero attrazioni dopo: " + instance.getNumeroAttrazioni());
         }
         return instance;
@@ -108,7 +108,7 @@ public class Museo {
         return this.attractions;
     }
 
-    public void setNumeroAttrazini(int attrazioni) {
+    public void setNumeroAttrazioni(int attrazioni) {
         this.attractions = attrazioni;
     }
 

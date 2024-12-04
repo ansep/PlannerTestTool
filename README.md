@@ -20,9 +20,69 @@ The Planner Test Tool is a Java-based application that generates PDDL (Planning 
 
 ## Usage
 
-### Generation of domain and problem PDDL files
+### Generation of domain and problem PDDL files using the UI
+
+To run the program with the GUI, simply execute the following command if you are using maven:
+
+```sh
+mvn clean javafx:run
+```
+
+If you are using the compiled jar file, execute the following command:
+
+```sh
+java -jar PlannerTestTool.jar
+```
 
 From the UI customize the options, select the target folder for generated PDDL files and click on _Genera PDDL_.
+
+### Generation of domain and problem PDDL files using the command line
+
+To run the program from the command line, you can use the following options:
+
+- `-i` or `--input`: Input museum.properties file
+- `-o` or `--output`: Directory where to save the PDDL files (required)
+- `-r` or `--rooms`: Number of rooms
+- `-a` or `--attractions`: Number of attractions
+- `-l` or `--links`: Number of links between rooms (must be between 1 and 3)
+- `-v` or `--visits`: Number of attractions to visit (required)
+
+You must specify either an input museum properties file or provide the number of rooms, attractions, and links.
+
+#### Example Command
+
+If you are using maven, you can run the program with the following command:
+
+```sh
+mvn clean compile exec:java -Dexec.args="-o output_directory -r 10 -a 50 -l 3 -v 20"
+```
+
+If you are using the compiled jar file, you can run the program with the following command:
+
+```sh
+java -jar PlannerTestTool.jar -o output_directory -r 10 -a 50 -l 5 -v 20
+```
+
+This command will generate PDDL files with the specified number of rooms, attractions, links, and visits, and save them in the specified output directory.
+
+#### Using an Input File
+
+If you have an input `museum.properties` file, you can specify it with the `-i` option:
+
+```sh
+java -jar PlannerTestTool.jar -i path/to/museum.properties -o output_directory -v visits
+```
+
+In this case, the program will use the information from the input file to generate the PDDL files.
+
+### Output
+
+The program will generate the following files in the specified output directory:
+
+- `domain.pddl`: The PDDL domain file
+- `problem.pddl`: The PDDL problem file
+- `generation_info.json`: A JSON file containing information about the generation process, including the number of rooms, attractions, links, visits, and the time taken to generate the files.
+- `museum.properties`: The topology of the museum
 
 If you want to use custom domain and problem files you must rename them to _domain.pddl_ and _problem.pddl_ and place them in the same folder.
 
