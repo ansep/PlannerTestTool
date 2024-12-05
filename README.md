@@ -70,6 +70,12 @@ This command will generate PDDL files with the specified number of rooms, attrac
 If you have an input `museum.properties` file, you can specify it with the `-i` option:
 
 ```sh
+mvn clean compile exec:java -Dexec.args="-i path/to/museum.properties -o output_directory -v visits"
+```
+
+or
+
+```sh
 java -jar PlannerTestTool.jar -i path/to/museum.properties -o output_directory -v visits
 ```
 

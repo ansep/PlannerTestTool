@@ -1,30 +1,28 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package it.uniroma1.plannertests.model.stanze;
 
 import it.uniroma1.plannertests.model.Attrazione;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author ansep
- */
-public abstract class Stanza {
+public class Stanza {
     private int id;
     private List<Attrazione> attrazioni;
-    protected List<Stanza> stanzeAdiacenti;
+    private List<Stanza> stanzeAdiacenti;
+    private int maxAdiacenti;
 
-    public Stanza(int id) {
+    public Stanza(int id, int maxAdiacenti) {
         this.id = id;
+        this.maxAdiacenti = maxAdiacenti;
         this.attrazioni = new ArrayList<>();
+        this.stanzeAdiacenti = new ArrayList<>();
     }
 
     public int getId() {
         return this.id;
+    }
+
+    public int getMaxAdiacenti() {
+        return this.maxAdiacenti;
     }
 
     public void addAttrazione(Attrazione a) {
@@ -40,10 +38,20 @@ public abstract class Stanza {
     }
 
     public void addStanzaAdiacente(Stanza s) {
-        if (this.stanzeAdiacenti == null) {
-            this.stanzeAdiacenti = new ArrayList<>();
+        if (this.stanzeAdiacenti.size() < this.maxAdiacenti) {
+            if (!this.stanzeAdiacenti.contains(s)) {
+                this.stanzeAdiacenti.add(s);
+                s.addStanzaAdiacenteInterno(this); // Aggiunge bidirezionalmente
+            }
         }
-        this.stanzeAdiacenti.add(s);
+    }
+
+    private void addStanzaAdiacenteInterno(Stanza s) {
+        if (this.stanzeAdiacenti.size() < this.maxAdiacenti) {
+            if (!this.stanzeAdiacenti.contains(s)) {
+                this.stanzeAdiacenti.add(s);
+            }
+        }
     }
 
     public List<Stanza> getStanzeAdiacenti() {
