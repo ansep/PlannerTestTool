@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import it.uniroma1.plannertests.writer.*;
 import it.uniroma1.plannertests.model.Museo;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -32,7 +33,8 @@ public class CommandLineApp {
         options.addOption(
                 Option.builder("v").longOpt("visits").hasArg().desc("Number of attractions to visit").required()
                         .build());
-        options.addOption(Option.builder("i").longOpt("input").hasArg().desc("Input museum.properties file").build());
+        // options.addOption(Option.builder("i").longOpt("input").hasArg().desc("Input
+        // museum.properties file").build());
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -41,20 +43,22 @@ public class CommandLineApp {
             CommandLine cmd = parser.parse(options, args);
 
             String outputDirectory = cmd.getOptionValue("output");
-            String inputFilePath = cmd.getOptionValue("input");
+            // String inputFilePath = cmd.getOptionValue("input");
 
             Museo museo;
             int numberOfVisits = Integer.parseInt(cmd.getOptionValue("visits"));
-            if (inputFilePath != null) {
-                museo = Museo.getInstanceFromFile(inputFilePath);
-                if (numberOfVisits > 0) {
-                    generatePddlFiles(museo, numberOfVisits, outputDirectory);
-                } else {
-                    System.err.println("Invalid number of visits: " + numberOfVisits);
-                    System.exit(1);
-                }
-            } else if (inputFilePath == null &&
-                    cmd.getOptionValue("rooms") == null ||
+            // if (inputFilePath != null) {
+            // museo = Museo.getInstanceFromFile(inputFilePath);
+            // if (numberOfVisits > 0) {
+            // generatePddlFiles(museo, numberOfVisits, outputDirectory);
+            // } else {
+            // System.err.println("Invalid number of visits: " + numberOfVisits);
+            // System.exit(1);
+            // }
+            // } else
+            if (
+            // inputFilePath == null &&
+            cmd.getOptionValue("rooms") == null ||
                     cmd.getOptionValue("attractions") == null ||
                     cmd.getOptionValue("links") == null) {
                 System.err.println("Missing required options: rooms, attractions, links");
@@ -106,6 +110,7 @@ public class CommandLineApp {
         System.out.println(
                 "Parametric PDDL files generated successfully in " + duration + "ms and saved in "
                         + outputPathParametric);
+        writeGenerationInfo(parametricWriter.getFolderPath(), "generation_time_ms", duration);
 
         // Grounded PDDL
         timer.start();
@@ -116,6 +121,7 @@ public class CommandLineApp {
         System.out.println(
                 "Grounded PDDL files generated successfully in " + duration + "ms and saved in "
                         + outputPathGroundedOld);
+        writeGenerationInfo(groundedWriter.getFolderPath(), "generation_time_ms", duration);
 
         // New Grounded PDDL
         timer.start();
@@ -126,5 +132,24 @@ public class CommandLineApp {
         System.out.println(
                 "New Grounded PDDL files generated successfully in " + duration + "ms and saved in "
                         + outputPathGroundedNew);
+        writeGenerationInfo(newWriter.getFolderPath(), "generation_time_ms", duration);
     }
+
+    private static void writeGenerationInfo(String pddlOutputPath, String timeFieldName, long durationMs)
+            throws IOException {
+        // Define the generation_info.json file path
+        File jsonFile = new File(pddlOutputPath, "generation_info.json");
+
+        // Create a new JSONObject and add the generation time
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put(timeFieldName, durationMs);
+
+        // Write the JSON object to generation_info.json using FileWriter
+        try (FileWriter fileWriter = new FileWriter(jsonFile)) {
+            fileWriter.write(jsonObj.toString(4)); // Indent with 4 spaces for readability
+        }
+
+        System.out.println("Generation info written to " + jsonFile.getAbsolutePath());
+    }
+
 }

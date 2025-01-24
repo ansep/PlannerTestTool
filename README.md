@@ -15,8 +15,8 @@ The Planner Test Tool is a Java-based application that generates PDDL (Planning 
 2. Install Java JDK 21.
 3. Install Maven.
 4. Install Docker.
-5. Open the project in NetBeans.
-6. Build and run the project.
+5. Build the project with Maven: `mvn clean package`.
+6. Run the program using the UI or the command line.
 
 ## Usage
 
@@ -31,7 +31,7 @@ mvn clean javafx:run
 If you are using the compiled jar file, execute the following command:
 
 ```sh
-java -jar PlannerTestTool.jar
+java -jar target/PlannerTests-2.0.jar
 ```
 
 From the UI customize the options, select the target folder for generated PDDL files and click on _Genera PDDL_.
@@ -60,7 +60,7 @@ mvn clean compile exec:java -Dexec.args="-o output_directory -r 10 -a 50 -l 3 -v
 If you are using the compiled jar file, you can run the program with the following command:
 
 ```sh
-java -jar PlannerTestTool.jar -o output_directory -r 10 -a 50 -l 5 -v 20
+java -jar target/PlannerTests-2.0.jar -o output_directory -r 10 -a 50 -l 5 -v 20
 ```
 
 This command will generate PDDL files with the specified number of rooms, attractions, links, and visits, and save them in the specified output directory.
@@ -76,7 +76,7 @@ mvn clean compile exec:java -Dexec.args="-i path/to/museum.properties -o output_
 or
 
 ```sh
-java -jar PlannerTestTool.jar -i path/to/museum.properties -o output_directory -v visits
+java -jar target/PlannerTests-2.0.jar -i path/to/museum.properties -o output_directory -v visits
 ```
 
 In this case, the program will use the information from the input file to generate the PDDL files.

@@ -96,26 +96,29 @@ public class NewPddlWriter extends AbstractWriter {
             }
         }
 
+        // printList(adiacenze);
+        // printList(listaPrev);
+
         ArrayDeque<Integer> grey = new ArrayDeque<>();
         ArrayDeque<Integer> black = new ArrayDeque<>();
         int startNode = roomArray[0].getId();
-        // Ricerca delle foglie
+        // ricerca delle foglie
         for (int i : adiacenze.keySet()) {
-            // Se è nodo foglia, non ha adiacenze
+            // se è nodo foglia, non ha adiacenze
             if (adiacenze.get(i).isEmpty())
                 grey.add(i);
         }
         while (!grey.isEmpty()) {
             int nodo = grey.poll();
-            List<Integer> prevList = listaPrev.get(nodo);
-            if (prevList == null || prevList.isEmpty()) {
-                System.err.println("Nodo " + nodo + " non ha stanze precedenti. Ignorato.");
-                continue; // Salta questo nodo se non ha stanze precedenti
+            int prev = -1;
+            for (int x : listaPrev.get(nodo)) {
+                prev = x;
+                break;
             }
-            int prev = prevList.get(0); // Prendi la prima stanza precedente
             recursiveLink(prev, nodo, startNode, listaPrev, grey, black);
             black.add(nodo);
         }
+        // printList(adiacenze);
     }
 
     private static void printList(Map<Integer, List<Integer>> map) {
