@@ -110,7 +110,7 @@ public class CommandLineApp {
         System.out.println(
                 "Parametric PDDL files generated successfully in " + duration + "ms and saved in "
                         + outputPathParametric);
-        writeGenerationInfo(parametricWriter.getFolderPath(), "generation_time_ms", duration);
+        writeGenerationInfo(parametricWriter.getFolderPath(), "parametric", museo, numberOfVisits, duration);
 
         // Grounded PDDL
         timer.start();
@@ -121,7 +121,7 @@ public class CommandLineApp {
         System.out.println(
                 "Grounded PDDL files generated successfully in " + duration + "ms and saved in "
                         + outputPathGroundedOld);
-        writeGenerationInfo(groundedWriter.getFolderPath(), "generation_time_ms", duration);
+        writeGenerationInfo(groundedWriter.getFolderPath(), "old", museo, numberOfVisits, duration);
 
         // New Grounded PDDL
         timer.start();
@@ -132,17 +132,22 @@ public class CommandLineApp {
         System.out.println(
                 "New Grounded PDDL files generated successfully in " + duration + "ms and saved in "
                         + outputPathGroundedNew);
-        writeGenerationInfo(newWriter.getFolderPath(), "generation_time_ms", duration);
+        writeGenerationInfo(newWriter.getFolderPath(), "new", museo, numberOfVisits, duration);
     }
 
-    private static void writeGenerationInfo(String pddlOutputPath, String timeFieldName, long durationMs)
+    private static void writeGenerationInfo(String pddlOutputPath, String type, Museo museo, int visite, long duration)
             throws IOException {
         // Define the generation_info.json file path
         File jsonFile = new File(pddlOutputPath, "generation_info.json");
 
         // Create a new JSONObject and add the generation time
         JSONObject jsonObj = new JSONObject();
-        jsonObj.put(timeFieldName, durationMs);
+        jsonObj.put("type", type);
+        jsonObj.put("number_of_rooms", museo.getOpenRooms());
+        jsonObj.put("number_of_attractions", museo.getNumeroAttrazioni());
+        jsonObj.put("number_of_links", museo.getCollegamenti());
+        jsonObj.put("number_of_visits", visite);
+        jsonObj.put("generation_time_ms", duration);
 
         // Write the JSON object to generation_info.json using FileWriter
         try (FileWriter fileWriter = new FileWriter(jsonFile)) {
