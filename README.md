@@ -120,6 +120,12 @@ Available algorithms for the --alias flag:
 | seq-sat-fdss-2018        | Sequential satisficing with Fast Downward single search (2018) | Yes                              |
 | seq-sat-lama-2011        | Sequential satisficing with Lazy A\* (2011)                    | No                               |
 
+### Running the planner with Downward A\* Blind algorithm
+
+Use the following command to run the planner with the Downward A\* Blind algorithm. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored.
+
+`docker run --rm -v "<LOCAL_PDDL_FOLDER>:/pddl" aibasel/downward /pddl/domain.pddl /pddl/problem.pddl --search "astar(blind())"`
+
 ### Running the planner with SymBA\* 2 algorithm
 
 Use the following command to run the planner with the SymBA\* 2 algorithm. Replace `<LOCAL_PDDL_FOLDER>` with the directory where the PDDL files are stored.
